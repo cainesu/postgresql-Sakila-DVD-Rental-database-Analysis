@@ -11,7 +11,7 @@ Introduction
 
 Requirement
 ---------------------
-
+The analysis was done using postgresql.
 
 Maintainers
 ---------------------
