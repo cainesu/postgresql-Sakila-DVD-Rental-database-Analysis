@@ -8,6 +8,8 @@ postgresql-Sakila-DVD-Rental-database-Analysis
 
 Introduction
 ---------------------
+Postgresql showcase:
+This project includes solving 5 analytical questions in Sakila-DVD-Rental-database using Postgresql.
 
 Requirement
 ---------------------
