@@ -1,0 +1,76 @@
+/*Query 1*/
+/*family categories are Family, Music, Animation, Comedy, Classic and Music.*/
+SELECT t1.category_name, SUM(t1.rental_count)
+FROM
+(
+SELECT f.title AS film_title, c.name AS category_name, count(r.rental_date) AS rental_count
+FROM film f
+JOIN film_category fc
+ON f.film_id = fc.film_id
+JOIN category c
+ON fc.category_id = c.category_id
+JOIN inventory i
+ON f.film_id = i.film_id
+JOIN rental r
+ON i.inventory_id = r.inventory_id
+WHERE c.name = 'Animation' OR c.name = 'Family' OR c.name = 'Children' OR c.name = 'Classics'
+OR c.name = 'Comedy' OR c.name = 'Music'
+GROUP BY 2,1
+ORDER BY 2,1)t1
+GROUP BY 1;
+
+/*Query 2*/
+/*family categories are Family, Music, Animation, Comedy, Classic and Music.*/
+SELECT t1.rental_duration, t1.category_name,  COUNT(t1.rental_duration)
+FROM
+(
+SELECT f.title AS film_title, c.name AS category_name, f.rental_duration,
+NTILE(4) OVER (ORDER BY f.rental_duration) AS standard_quartile
+FROM film f
+JOIN film_category fc
+ON f.film_id = fc.film_id
+JOIN category c
+ON fc.category_id = c.category_id
+WHERE c.name = 'Animation' OR c.name = 'Family' OR c.name = 'Children' OR c.name = 'Classics'
+OR c.name = 'Comedy' OR c.name = 'Music')t1
+GROUP BY 1,2
+ORDER BY 2,1
+
+/*Query 3*/
+/*family categories are Family, Music, Animation, Comedy, Classic and Music.*/
+SELECT t1.category_name,  t1.standard_quartile, COUNT(t1.rental_duration)
+FROM
+(
+SELECT f.title AS film_title, c.name AS category_name, f.rental_duration,
+NTILE(4) OVER (ORDER BY f.rental_duration) AS standard_quartile
+FROM film f
+JOIN film_category fc
+ON f.film_id = fc.film_id
+JOIN category c
+ON fc.category_id = c.category_id
+WHERE c.name = 'Animation' OR c.name = 'Family' OR c.name = 'Children' OR c.name = 'Classics'
+OR c.name = 'Comedy' OR c.name = 'Music')t1
+GROUP BY 1,2
+ORDER BY 2,1;
+
+/*Query 4*/
+/*Query for top 10 paying customers group by month*/
+SELECT DATE_TRUNC('month', p.payment_date) AS pay_month, t1.fullname AS customer_name, sum(p.amount) AS pay_amount
+FROM 
+(
+SELECT p.customer_id, 
+CONCAT(c.first_name, ' ', c.last_name) AS fullname,
+count(p.payment_date),
+sum(p.amount)
+FROM customer c
+JOIN payment p
+ON c.customer_id = p.customer_id
+GROUP BY 2,1
+ORDER BY 4 DESC
+LIMIT 10)t1
+
+JOIN payment p 
+ON p.customer_id = t1.customer_id
+GROUP BY 2,1
+ORDER BY 2
+;
